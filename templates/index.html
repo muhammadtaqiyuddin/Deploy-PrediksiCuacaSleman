@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediksi Cuaca Sleman</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.7),
+            rgba(0, 0, 0, 0.7)
+          ),
+          url("/images/merapi.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .form-container {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+      }
+      .form-group label {
+        font-weight: bold;
+        color: #f8f9fa;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-group input[type="text"] {
+        border: none;
+        background: rgba(255, 255, 255, 0.3);
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 5px;
+        width: 100%;
+        color: #fff;
+        outline: none;
+      }
+      .form-group input[type="text"]::placeholder {
+        color: #ccc;
+      }
+      .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        color: #fff;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+        width: 100%;
+      }
+      .btn-primary:hover {
+        background-color: #0056b3;
+      }
+      .result {
+        margin-top: 20px;
+        color: #fff;
+      }
+      @media (max-width: 768px) {
+        body {
+          background-attachment: scroll;
+        }
+        .form-container {
+          padding: 20px;
+        }
+        .form-group input[type="text"],
+        .btn-primary {
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <h2>Prediksi Cuaca <br />Kabupaten Sleman</h2>
+      <br />
+      <form id="weather-form" class="form" method="POST" action="/predict">
+        <div class="form-group">
+          <label for="temperature">Rata-rata Temperature (°C):</label>
+          <input
+            type="text"
+            id="temperature"
+            name="temperature"
+            placeholder="Masukkan suhu"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="wind_speed">Kecepatan Angin 10m (km/h):</label>
+          <input
+            type="text"
+            id="wind_speed"
+            name="wind_speed"
+            placeholder="Masukkan kecepatan angin"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="humidity">Kelembaban Relatif (%):</label>
+          <input
+            type="text"
+            id="humidity"
+            name="humidity"
+            placeholder="Masukkan kelembaban"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="rainfall">Curah Hujan (mm):</label>
+          <input
+            type="text"
+            id="rainfall"
+            name="rainfall"
+            placeholder="Masukkan curah hujan"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="radiation">Radiasi Sinar Matahari (W/m²):</label>
+          <input
+            type="text"
+            id="radiation"
+            name="radiation"
+            placeholder="Masukkan radiasi sinar matahari"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Prediksi</button>
+      </form>
+      <div id="result" class="result"></div>
+    </div>
+
+    <script>
+      const form = document.getElementById("weather-form");
+      const resultDiv = document.getElementById("result");
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        fetch("/predict", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.prediction) {
+              const temperature = data.prediction * 100; // Assuming prediction is in the range of 0 to 1
+              let description = "";
+
+              if (temperature < 10) {
+                description =
+                  "Sangat dingin! Suhu di bawah 10°C. Jangan lupa pakai jaket tebal.";
+              } else if (temperature < 20) {
+                description =
+                  "Dingin. Suhu antara 10°C dan 20°C. Waktunya menikmati teh hangat!";
+              } else if (temperature < 25) {
+                description =
+                  "Hangat nyaman. Suhu antara 20°C dan 25°C. Cuaca sempurna untuk jalan-jalan santai.";
+              } else if (temperature < 30) {
+                description =
+                  "Hangat. Suhu antara 25°C dan 30°C. Nikmati hari yang cerah!";
+              } else if (temperature < 35) {
+                description =
+                  "Panas. Suhu antara 30°C dan 35°C. Jangan lupa minum banyak air dan tetap di tempat yang sejuk.";
+              } else {
+                description =
+                  "Sangat panas! Suhu di atas 35°C. pastikan tetap terhidrasi dan hindari sinar matahari langsung.";
+              }
+
+              resultDiv.innerHTML = `<h4>Prediksi Cuaca: ${temperature.toFixed(
+                2
+              )}°C</h4><p>${description}</p>`;
+            } else if (data.error) {
+              resultDiv.innerHTML = `<h4>Error: ${data.error}</h4>`;
+            }
+          })
+          .catch((error) => {
+            resultDiv.innerHTML = `<h4>Error: ${error.message}</h4>`;
+          });
+      });
+    </script>
+  </body>
+</html>
