@@ -1,4 +1,4 @@
-<strong style="text-align: center;">Prediksi Cuaca Kabupaten Sleman Menggunakan Algoritma Random Forest </strong><br><br>
+<p  style="text-align: center;><strong">Prediksi Cuaca Kabupaten Sleman Menggunakan Algoritma Random Forest </strong></p><br><br>
 <b>Muhammad Taqiyuddin Mail (Universitas Amikom Yogyakarta, Yogyakarta, Indonesia) </b><br>
 <b>Theopilus Bayu Sasongko (Universitas Amikom Yogyakarta, Yogyakarta, Indonesia)</b><br>
 
